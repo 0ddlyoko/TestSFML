@@ -6,14 +6,18 @@
 #include "../GenericApp.hpp"
 #include "AStarCell.hpp"
 
-const sf::Vector2<int> NEIGHBORS[4] = {
+const sf::Vector2<int> NEIGHBORS[8] = {
         {-1, 0},
         {1, 0},
         {0, -1},
         {0, 1},
+        {-1, -1},
+        {-1, 1},
+        {1, -1},
+        {1, 1},
 };
 
-constexpr int ASTAR_VOID_PERCENTAGE = 70;
+constexpr int ASTAR_VOID_PERCENTAGE = 50;
 
 class AStar : public GenericApp {
 public:
@@ -24,14 +28,14 @@ public:
     const sf::Color END_COLOR = sf::Color::Green;
 
     struct Cell {
-        Cell(AStarCell *cell, AStarCell *parent, unsigned heuristic);
-
-        AStarCell *m_cell;
-        AStarCell *m_parent;
-        unsigned m_heuristic;
+        Cell(AStarCell *cell, AStarCell *parent, double heuristic);
 
         friend bool operator<(const Cell &lhs, const Cell &rhs);
         friend bool operator>(const Cell &lhs, const Cell &rhs);
+
+        AStarCell *m_cell;
+        AStarCell *m_parent;
+        double m_heuristic;
     };
 
     AStar(Application &app);
@@ -42,9 +46,10 @@ public:
 private:
 
     [[nodiscard]] std::vector<AStarCell*> getNeighbors(const AStarCell &cell);
-    [[nodiscard]] bool canGoTo(const AStarCell &cell) const;
     void showPath(AStarCell *cell, sf::Color color);
-    [[nodiscard]] static unsigned distance(const vec2i &cell1, const vec2i &cell2);
+    [[nodiscard]] static bool canGoTo(const AStarCell &cell);
+    [[nodiscard]] static double cost(const AStarCell &from, const AStarCell &to);
+    [[nodiscard]] static double distance(const vec2i &cell1, const vec2i &cell2);
 
     std::vector<AStarCell> m_map;
     std::priority_queue<Cell, std::vector<Cell>, std::greater<>> m_cells;

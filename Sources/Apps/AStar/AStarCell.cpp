@@ -17,19 +17,19 @@ const AStarCell::vec2i &AStarCell::getPos() const {
     return m_pos;
 }
 
-unsigned AStarCell::getCost() const {
+double AStarCell::getCost() const {
     return m_cost;
 }
 
-void AStarCell::setCost(unsigned int cost) {
+void AStarCell::setCost(double cost) {
     m_cost = cost;
 }
 
-unsigned AStarCell::getHeuristic() const {
+double AStarCell::getHeuristic() const {
     return m_heuristic;
 }
 
-void AStarCell::setHeuristic(unsigned int heuristic) {
+void AStarCell::setHeuristic(double heuristic) {
     m_heuristic = heuristic;
 }
 

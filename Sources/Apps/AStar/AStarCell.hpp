@@ -17,10 +17,10 @@ public:
     AStarCell(vec2i &&pos, unsigned cost, unsigned heuristic, CellType cell_type);
 
     [[nodiscard]] const vec2i &getPos() const;
-    [[nodiscard]] unsigned getCost() const;
-    void setCost(unsigned cost);
-    [[nodiscard]] unsigned getHeuristic() const;
-    void setHeuristic(unsigned heuristic);
+    [[nodiscard]] double getCost() const;
+    void setCost(double cost);
+    [[nodiscard]] double getHeuristic() const;
+    void setHeuristic(double heuristic);
     [[nodiscard]] bool hasEntered() const;
     void setEntered(bool entered);
     [[nodiscard]] AStarCell *getParent() const;
@@ -30,8 +30,8 @@ public:
 
 private:
     vec2i m_pos;
-    unsigned m_cost;
-    unsigned m_heuristic;
+    double m_cost;
+    double m_heuristic;
     bool m_entered;
     AStarCell *m_parent;
     CellType m_cell_type;

@@ -14,8 +14,7 @@ AStar::AStar(Application &app):
         m_range(0, 100) {
     for (int y = 0; y < CELL_ROW; y++) {
         for (int x = 0; x < CELL_COL; x++) {
-            AStarCell cell({x, y}, 0, 0, m_range(m_rng) < ASTAR_VOID_PERCENTAGE ? AStarCell::CellType::AIR : AStarCell::CellType::BLOCK);
-            m_map.push_back(cell);
+            m_map.push_back(AStarCell({x, y}, 0, 0, m_range(m_rng) <= ASTAR_VOID_PERCENTAGE ? AStarCell::CellType::AIR : AStarCell::CellType::BLOCK));
         }
     }
     m_map.at(getCellIndex(m_start)).setCellType(AStarCell::AIR);
@@ -23,7 +22,7 @@ AStar::AStar(Application &app):
 }
 
 void AStar::init() {
-    m_app.setFps(120);
+    m_app.setFps(12000);
     // Add initial position
     AStarCell *initial_cell = &m_map.at(getCellIndex(m_start.x, m_start.y));
     m_cells.emplace(initial_cell, nullptr, distance(initial_cell->getPos(), m_end));
@@ -66,9 +65,9 @@ void AStar::nextIteration() {
                         if (!canGoTo(*neighbor))
                             continue;
                         // TODO Calculate that
-                        unsigned moveCost = 1;
-                        unsigned newCost = current.m_cell->getCost() + moveCost;
-                        unsigned newHeuristic = newCost + distance(neighbor->getPos(), m_end);
+                        double moveCost = cost(*current.m_cell, *neighbor);
+                        double newCost = current.m_cell->getCost() + moveCost;
+                        double newHeuristic = newCost + distance(neighbor->getPos(), m_end);
                         // Check if we haven't performed this neighbor AND his cost is greater than the new cost
                         if (!neighbor->hasEntered() && (neighbor->getCost() == 0 || neighbor->getCost() > newCost)) {
                             // Update new parent, cost and heuristic
@@ -101,10 +100,6 @@ std::vector<AStarCell*> AStar::getNeighbors(const AStarCell &cell) {
     return result;
 }
 
-bool AStar::canGoTo(const AStarCell &cell) const {
-    return cell.getCellType() == AStarCell::AIR;
-}
-
 void AStar::showPath(AStarCell *cell, sf::Color color) {
     AStarCell *currentCell = cell;
     while (currentCell) {
@@ -113,15 +108,24 @@ void AStar::showPath(AStarCell *cell, sf::Color color) {
     }
 }
 
-unsigned AStar::distance(const vec2i &cell1, const vec2i &cell2) {
-    return unsigned(
+bool AStar::canGoTo(const AStarCell &cell) {
+    return cell.getCellType() == AStarCell::AIR;
+}
+
+double AStar::cost(const AStarCell &from, const AStarCell &to) {
+    // Real distance
+    return distance(from.getPos(), to.getPos());
+}
+
+double AStar::distance(const vec2i &cell1, const vec2i &cell2) {
+    return sqrt(
             pow(std::max(cell1.x, cell2.x) - std::min(cell1.x, cell2.x), 2) +
             pow(std::max(cell1.y, cell2.y) - std::min(cell1.y, cell2.y), 2));
 }
 
 // ---------------- Cell ----------------
 
-AStar::Cell::Cell(AStarCell *cell, AStarCell *parent, unsigned int heuristic):
+AStar::Cell::Cell(AStarCell *cell, AStarCell *parent, double heuristic):
         m_cell(cell),
         m_parent(parent),
         m_heuristic(heuristic) {
