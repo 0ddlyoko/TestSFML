@@ -6,10 +6,15 @@ class Cell;
 
 class AStarCell {
 public:
+    enum CellType {
+        AIR,
+        BLOCK,
+    };
+
     using vec2i = sf::Vector2<int>;
 
-    AStarCell(vec2i &pos, unsigned cost, unsigned heuristic);
-    AStarCell(vec2i &&pos, unsigned cost, unsigned heuristic);
+    AStarCell(vec2i &pos, unsigned cost, unsigned heuristic, CellType cell_type);
+    AStarCell(vec2i &&pos, unsigned cost, unsigned heuristic, CellType cell_type);
 
     [[nodiscard]] const vec2i &getPos() const;
     [[nodiscard]] unsigned getCost() const;
@@ -20,6 +25,8 @@ public:
     void setEntered(bool entered);
     [[nodiscard]] AStarCell *getParent() const;
     void setParent(AStarCell *parent);
+    [[nodiscard]] CellType getCellType() const;
+    void setCellType(CellType cell_type);
 
 private:
     vec2i m_pos;
@@ -27,6 +34,7 @@ private:
     unsigned m_heuristic;
     bool m_entered;
     AStarCell *m_parent;
+    CellType m_cell_type;
 };
 
 

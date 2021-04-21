@@ -1,15 +1,16 @@
 #include "AStarCell.hpp"
 
-AStarCell::AStarCell(vec2i &pos, unsigned cost, unsigned heuristic):
+AStarCell::AStarCell(vec2i &pos, unsigned cost, unsigned heuristic, CellType cell_type):
         m_pos(pos),
         m_cost(cost),
         m_heuristic(heuristic),
         m_entered(false),
-        m_parent(nullptr) {
+        m_parent(nullptr),
+        m_cell_type(cell_type) {
 }
 
-AStarCell::AStarCell(vec2i &&pos, unsigned cost, unsigned heuristic):
-        AStarCell(pos, cost, heuristic) {
+AStarCell::AStarCell(vec2i &&pos, unsigned cost, unsigned heuristic, CellType cell_type):
+        AStarCell(pos, cost, heuristic, cell_type) {
 }
 
 const AStarCell::vec2i &AStarCell::getPos() const {
@@ -46,4 +47,12 @@ AStarCell *AStarCell::getParent() const {
 
 void AStarCell::setParent(AStarCell *parent) {
     m_parent = parent;
+}
+
+AStarCell::CellType AStarCell::getCellType() const {
+    return m_cell_type;
+}
+
+void AStarCell::setCellType(AStarCell::CellType cell_type) {
+    m_cell_type = cell_type;
 }

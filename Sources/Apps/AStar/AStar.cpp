@@ -9,12 +9,17 @@ AStar::AStar(Application &app):
         m_start(1, 1),
         m_end(CELL_COL - 2, CELL_ROW - 20),
         m_found(false),
-        m_last_cell(nullptr) {
-    for (int y = 0; y < CELL_ROW; y++)
+        m_last_cell(nullptr),
+        m_rng((unsigned) std::time(nullptr)),
+        m_range(0, 100) {
+    for (int y = 0; y < CELL_ROW; y++) {
         for (int x = 0; x < CELL_COL; x++) {
-            AStarCell cell({x, y}, 0, 0);
+            AStarCell cell({x, y}, 0, 0, m_range(m_rng) < ASTAR_VOID_PERCENTAGE ? AStarCell::CellType::AIR : AStarCell::CellType::BLOCK);
             m_map.push_back(cell);
         }
+    }
+    m_map.at(getCellIndex(m_start)).setCellType(AStarCell::AIR);
+    m_map.at(getCellIndex(m_end)).setCellType(AStarCell::AIR);
 }
 
 void AStar::init() {
@@ -22,6 +27,10 @@ void AStar::init() {
     // Add initial position
     AStarCell *initial_cell = &m_map.at(getCellIndex(m_start.x, m_start.y));
     m_cells.emplace(initial_cell, nullptr, distance(initial_cell->getPos(), m_end));
+    for (int y = 0; y < CELL_ROW; y++)
+        for (int x = 0; x < CELL_COL; x++)
+            if (m_map.at(getCellIndex(x, y)).getCellType() == AStarCell::BLOCK)
+                setCellColor({x, y}, STONE_COLOR);
 }
 
 void AStar::nextIteration() {
@@ -53,6 +62,9 @@ void AStar::nextIteration() {
                 } else {
                     // Check for neighbors
                     for (AStarCell *neighbor : getNeighbors(*current.m_cell)) {
+                        // Check if we can go to this neighbor
+                        if (!canGoTo(*neighbor))
+                            continue;
                         // TODO Calculate that
                         unsigned moveCost = 1;
                         unsigned newCost = current.m_cell->getCost() + moveCost;
@@ -71,17 +83,10 @@ void AStar::nextIteration() {
             }
         }
     }
-
     if (m_last_cell)
-        showPath(m_last_cell, sf::Color::Black);
-    setCellColor(m_end, sf::Color::Green);
-    setCellColor(m_start, sf::Color::Red);
-}
-
-unsigned AStar::distance(const vec2i &cell1, const vec2i &cell2) {
-    return unsigned(
-            pow(std::max(cell1.x, cell2.x) - std::min(cell1.x, cell2.x), 2) +
-            pow(std::max(cell1.y, cell2.y) - std::min(cell1.y, cell2.y), 2));
+        showPath(m_last_cell, LINE_COLOR);
+    setCellColor(m_start, START_COLOR);
+    setCellColor(m_end, END_COLOR);
 }
 
 std::vector<AStarCell*> AStar::getNeighbors(const AStarCell &cell) {
@@ -96,12 +101,22 @@ std::vector<AStarCell*> AStar::getNeighbors(const AStarCell &cell) {
     return result;
 }
 
+bool AStar::canGoTo(const AStarCell &cell) const {
+    return cell.getCellType() == AStarCell::AIR;
+}
+
 void AStar::showPath(AStarCell *cell, sf::Color color) {
     AStarCell *currentCell = cell;
     while (currentCell) {
         setCellColor(currentCell->getPos(), color);
         currentCell = currentCell->getParent();
     }
+}
+
+unsigned AStar::distance(const vec2i &cell1, const vec2i &cell2) {
+    return unsigned(
+            pow(std::max(cell1.x, cell2.x) - std::min(cell1.x, cell2.x), 2) +
+            pow(std::max(cell1.y, cell2.y) - std::min(cell1.y, cell2.y), 2));
 }
 
 // ---------------- Cell ----------------
