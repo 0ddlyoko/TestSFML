@@ -119,8 +119,8 @@ double AStar::cost(const AStarCell &from, const AStarCell &to) {
 
 double AStar::distance(const vec2i &cell1, const vec2i &cell2) {
     return sqrt(
-            pow(std::max(cell1.x, cell2.x) - std::min(cell1.x, cell2.x), 2) +
-            pow(std::max(cell1.y, cell2.y) - std::min(cell1.y, cell2.y), 2));
+            pow(cell1.x - cell2.x, 2) +
+            pow(cell1.y - cell2.y, 2));
 }
 
 // ---------------- Cell ----------------
