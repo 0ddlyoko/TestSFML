@@ -35,10 +35,12 @@ public:
 
 private:
     [[nodiscard]] std::vector<AStarCell*> getNeighbors(const AStarCell &cell);
+    void showPath(AStarCell *cell, sf::Color color);
 
     std::vector<AStarCell> m_map;
     std::priority_queue<Cell, std::vector<Cell>, std::greater<>> m_cells;
     sf::Vector2<int> m_start;
     sf::Vector2<int> m_end;
     bool m_found;
+    AStarCell *m_last_cell;
 };

@@ -1,17 +1,15 @@
 #include "AStar.hpp"
 
-#include <chrono>
 #include <cmath>
-#include <ctime>
-#include <iostream>
 
 using namespace std;
 
 AStar::AStar(Application &app):
         GenericApp(app),
         m_start(1, 1),
-        m_end(CELL_COL - 2, CELL_ROW - 2),
-        m_found(false) {
+        m_end(CELL_COL - 2, CELL_ROW - 20),
+        m_found(false),
+        m_last_cell(nullptr) {
     for (int y = 0; y < CELL_ROW; y++)
         for (int x = 0; x < CELL_COL; x++) {
             AStarCell cell({x, y}, 0, 0);
@@ -20,75 +18,62 @@ AStar::AStar(Application &app):
 }
 
 void AStar::init() {
+    m_app.setFps(120);
     // Add initial position
     AStarCell *initial_cell = &m_map.at(getCellIndex(m_start.x, m_start.y));
-    if (m_start == m_end) {
-        m_found = true;
-    } else {
-        m_cells.emplace(initial_cell, nullptr, distance(initial_cell->getPos(), m_end));
-
-        const auto t_start = std::chrono::high_resolution_clock::now();
-
-        while (!m_cells.empty()) {
-            Cell current = m_cells.top();
-            m_cells.pop();
-            // Check for duplicates
-            if (current.m_cell->hasEntered())
-                continue;
-            current.m_cell->setEntered(true);
-            if (current.m_cell->getPos() == m_end) {
-                // FOUND !!!!
-                m_found = true;
-                break;
-            }
-            for (AStarCell *neighbor : getNeighbors(*current.m_cell)) {
-                // TODO Calculate that
-                unsigned moveCost = 1;
-                unsigned newCost = current.m_cell->getCost() + moveCost;
-                unsigned newHeuristic = newCost + distance(neighbor->getPos(), m_end);
-                if (!neighbor->hasEntered() && (neighbor->getCost() == 0 || neighbor->getCost() > newCost)) {
-                    // Update new parent, cost and heuristic
-                    neighbor->setParent(current.m_cell);
-                    neighbor->setCost(newCost);
-                    neighbor->setHeuristic(newHeuristic);
-                    // Put this neighbor in the priority queue
-                    m_cells.emplace(neighbor, current.m_cell, newHeuristic);
-                }
-            }
-        }
-
-        const auto t_end = std::chrono::high_resolution_clock::now();
-        double elapsed_time_ms = std::chrono::duration<double, std::milli>(t_end-t_start).count();
-        cout << "Time spend: " << elapsed_time_ms << "ms" << endl;
-    }
-    if (m_found) {
-        AStarCell *cell = &m_map.at(getCellIndex(m_end));
-        while (cell->getParent()) {
-            setCellColor(cell->getPos(), sf::Color::Blue);
-            cell = cell->getParent();
-        }
-        setCellColor(m_end, sf::Color::Green);
-        setCellColor(m_start, sf::Color::Red);
-        cout << "Found !" << endl;
-    } else {
-        cout << "Not found !" << endl;
-    }
+    m_cells.emplace(initial_cell, nullptr, distance(initial_cell->getPos(), m_end));
 }
 
 void AStar::nextIteration() {
     GenericApp::nextIteration();
     setCellColor(m_end, sf::Color::Green);
     setCellColor(m_start, sf::Color::Red);
-    cout << "nextIteration()" << endl;
 
+    if (m_last_cell) {
+        // Clear the path
+        showPath(m_last_cell, DEFAULT_COLOR);
+    }
 
-    if (m_found) {
-        AStarCell *cell = &m_map.at(getCellIndex(m_end));
-        while (cell->getParent()) {
-            setCellColor(cell->getPos(), sf::Color::Blue);
-            cell = cell->getParent();
+    if (!m_found) {
+        // Perform the next iteration
+        if (!m_cells.empty()) {
+            // Get and delete the top cell
+            Cell current = m_cells.top();
+            m_cells.pop();
+            // Check for duplicates
+            if (!current.m_cell->hasEntered()) {
+                // Set that we are doing this cell
+                current.m_cell->setEntered(true);
+                // Save last cell
+                m_last_cell = current.m_cell;
+                // Found ?
+                if (current.m_cell->getPos() == m_end) {
+                    // FOUND !!!!
+                    m_found = true;
+                } else {
+                    // Check for neighbors
+                    for (AStarCell *neighbor : getNeighbors(*current.m_cell)) {
+                        // TODO Calculate that
+                        unsigned moveCost = 1;
+                        unsigned newCost = current.m_cell->getCost() + moveCost;
+                        unsigned newHeuristic = newCost + distance(neighbor->getPos(), m_end);
+                        // Check if we haven't performed this neighbor AND his cost is greater than the new cost
+                        if (!neighbor->hasEntered() && (neighbor->getCost() == 0 || neighbor->getCost() > newCost)) {
+                            // Update new parent, cost and heuristic
+                            neighbor->setParent(current.m_cell);
+                            neighbor->setCost(newCost);
+                            neighbor->setHeuristic(newHeuristic);
+                            // Put this neighbor in the priority queue
+                            m_cells.emplace(neighbor, current.m_cell, newHeuristic);
+                        }
+                    }
+                }
+            }
         }
     }
+
+    if (m_last_cell)
+        showPath(m_last_cell, sf::Color::Black);
     setCellColor(m_end, sf::Color::Green);
     setCellColor(m_start, sf::Color::Red);
 }
@@ -110,6 +95,16 @@ std::vector<AStarCell*> AStar::getNeighbors(const AStarCell &cell) {
 
     return result;
 }
+
+void AStar::showPath(AStarCell *cell, sf::Color color) {
+    AStarCell *currentCell = cell;
+    while (currentCell) {
+        setCellColor(currentCell->getPos(), color);
+        currentCell = currentCell->getParent();
+    }
+}
+
+// ---------------- Cell ----------------
 
 AStar::Cell::Cell(AStarCell *cell, AStarCell *parent, unsigned int heuristic):
         m_cell(cell),
