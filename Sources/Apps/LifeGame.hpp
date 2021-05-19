@@ -6,9 +6,9 @@
 
 class LifeGame : public GenericApp {
 public:
-    const sf::Color CELL_COLOR{sf::Color::Black};
+    const sf::Color CELL_COLOR = sf::Color::Black;
 
-    LifeGame(Application &app);
+    explicit LifeGame(Application &app);
 
     void init() override;
     void nextIteration() override;

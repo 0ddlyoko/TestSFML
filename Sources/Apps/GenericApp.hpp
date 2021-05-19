@@ -4,8 +4,8 @@
 
 class Application;
 
-constexpr int CELL_COL = 100;
-constexpr int CELL_ROW = 100;
+constexpr int CELL_COL = 128;
+constexpr int CELL_ROW = 128;
 
 class GenericApp {
 

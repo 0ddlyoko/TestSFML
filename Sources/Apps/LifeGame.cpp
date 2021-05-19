@@ -2,9 +2,8 @@
 
 using namespace std;
 
-LifeGame::LifeGame(Application &app) :
+LifeGame::LifeGame(Application &app):
         GenericApp(app),
-        m_map(CELL_ROW * CELL_COL),
         m_rng((unsigned) std::time(nullptr)),
         m_range(0, 1) {
     for (unsigned cellIndex = 0; cellIndex < CELL_COL * CELL_ROW; cellIndex++)
@@ -14,7 +13,7 @@ LifeGame::LifeGame(Application &app) :
 void LifeGame::init() {
     m_app.setFps(500);
     // Draw
-    for (unsigned cellIndex = 0; cellIndex < CELL_COL * CELL_ROW; cellIndex++) {
+    for (int cellIndex = 0; cellIndex < CELL_COL * CELL_ROW; cellIndex++) {
         if (m_map.at(cellIndex))
             setCellColor(cellIndex, CELL_COLOR);
         else
@@ -26,7 +25,7 @@ void LifeGame::init() {
 void LifeGame::nextIteration() {
     GenericApp::nextIteration();
     std::vector<bool> newMap;
-    for (unsigned cellIndex = 0; cellIndex < CELL_ROW * CELL_COL; cellIndex++) {
+    for (int cellIndex = 0; cellIndex < CELL_ROW * CELL_COL; cellIndex++) {
         sf::Vector2<int> vec = getCellVector(cellIndex);
         unsigned numberOfCellsAround = getNumberOfCellsAround(vec.x, vec.y);
         bool cell = false;
@@ -49,7 +48,6 @@ void LifeGame::nextIteration() {
         }
     }
     m_map = newMap;
-    //cout << "LifeGame::update()" << endl;
 }
 
 unsigned LifeGame::getNumberOfCellsAround(int x, int y) {
