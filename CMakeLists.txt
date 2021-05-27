@@ -19,7 +19,11 @@ set(SOURCE
         Sources/Apps/LifeGame.cpp
         Sources/Apps/LifeGame.hpp
         Sources/Apps/AStar/AStar.cpp
-        Sources/Apps/AStar/AStar.hpp Sources/Apps/AStar/AStarCell.cpp Sources/Apps/AStar/AStarCell.hpp)
+        Sources/Apps/AStar/AStar.hpp
+        Sources/Apps/AStar/AStarCell.cpp
+        Sources/Apps/AStar/AStarCell.hpp
+        Sources/Apps/DiamondSquare.cpp
+        Sources/Apps/DiamondSquare.hpp Sources/Util/MathUtil.cpp Sources/Util/MathUtil.hpp)
 
 add_executable(TestSFML ${SOURCE})
 

@@ -6,10 +6,11 @@
 #include "Apps/TestApp.hpp"
 #include "Apps/LifeGame.hpp"
 #include "Apps/AStar/AStar.hpp"
+#include "Apps/DiamondSquare.hpp"
 
 using namespace std;
 
-constexpr int NUMBER_PARAMS = 3;
+constexpr int NUMBER_PARAMS = 4;
 
 class GenericApp;
 
@@ -20,7 +21,7 @@ bool isValidChoice(int choice) {
 template<typename T>
 void run() {
     cout << "Running app ..." << endl;
-    Application app(640, 480, "Test");
+    Application app(1280, 960, "Test");
     app.init<T>();
     app.run();
 }
@@ -35,6 +36,7 @@ int main() {
              << "1. Test Program" << endl
              << "2. Life Game Program" << endl
              << "3. AStar Program" << endl
+             << "4. DiamondSquare Program" << endl
              << (NUMBER_PARAMS + 1) << ". Exit" << endl;
         int option = 0;
         cin >> option;
@@ -54,6 +56,9 @@ int main() {
             case 3:
                 run<AStar>();
                 break;
+            case 4:
+                run<DiamondSquare>();
+                break;
             default:
                 exit = true;
                 break;
@@ -63,10 +68,4 @@ int main() {
 
     cout << "Hello, World!" << endl;
     return 0;
-}
-
-void print(const vector<int> &vector) {
-    for (int i : vector)
-        cout << i << " ";
-    cout << endl;
 }
