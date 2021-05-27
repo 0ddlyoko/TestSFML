@@ -1,20 +1,36 @@
 #include "DiamondSquare.hpp"
 
 #include "../Util/MathUtil.hpp"
+#include <chrono>
 
 using namespace std;
+
+using Clock=std::chrono::high_resolution_clock;
 
 DiamondSquare::DiamondSquare(Application &app):
         GenericApp(app),
         m_map(CELL_COL * CELL_ROW, 0) {
-    /*
-    for (unsigned cellIndex = 0; cellIndex < CELL_COL * CELL_ROW; cellIndex++)
-        m_map.push_back(m_range(m_rng));
-    */
 }
 
 void DiamondSquare::init() {
     m_app.setFps(500);
+    createNewMap();
+    cout << "LifeGame::init()" << endl;
+}
+
+void DiamondSquare::update() {
+    GenericApp::update();
+    if (m_app.getKeyboard().isKeyDown(KEY_NEW_MAP, true)) {
+        createNewMap();
+    }
+}
+
+void DiamondSquare::nextIteration() {
+    GenericApp::nextIteration();
+}
+
+void DiamondSquare::createNewMap() {
+    // Clear the map
     int width = CELL_COL;
     int height = CELL_ROW;
     // Initialize corners
@@ -30,17 +46,21 @@ void DiamondSquare::init() {
     // Here comes the program
     int i = width - 1;
     while (i > 1) {
+        auto t1 = Clock::now();
         int id = i / 2;
+        random_device rd;
+        mt19937 mt(rd());
+        uniform_int_distribution<int> dist(-id, id);
         for (int x = id; x < width; x += i) {
             for (int y = id; y < height; y += i) {
                 double avg = (
-                        getAt(x - id, y - id) +
-                        getAt(x + id, y - id) +
-                        getAt(x - id, y + id) +
-                        getAt(x + id, y + id)
-                        ) / 4.0;
+                                     getAt(x - id, y - id) +
+                                     getAt(x + id, y - id) +
+                                     getAt(x - id, y + id) +
+                                     getAt(x + id, y + id)
+                             ) / 4.0;
                 m_map.at(getCellIndex(x, y)) =
-                        MathUtil::range(DS_MIN_HEIGHT, DS_MAX_HEIGHT, int(avg + MathUtil::random(-id, id)));
+                        MathUtil::range(DS_MIN_HEIGHT, DS_MAX_HEIGHT, int(avg + dist(mt)));
             }
         }
         int decal = 0;
@@ -68,27 +88,18 @@ void DiamondSquare::init() {
                     sum += m_map.at(getCellIndex(x, y + id));
                     n++;
                 }
-                m_map.at(getCellIndex(x, y)) = int((sum / n) + MathUtil::random(-id, id));
+                m_map.at(getCellIndex(x, y)) = int((sum / n) + dist(mt));
             }
         }
+        auto t2 = Clock::now();
+        cout << "Duration for " << i << " is " << chrono::duration_cast<chrono::milliseconds>(t2 - t1).count() << "ms" << endl;
         i = id;
     }
 
     // Draw
     for (int cellIndex = 0; cellIndex < CELL_COL * CELL_ROW; cellIndex++) {
         setCellColor(cellIndex, getColor(m_map.at(cellIndex)));
-        /*
-        if (m_map.at(cellIndex))
-            setCellColor(cellIndex, CELL_COLOR);
-        else
-            resetCellColor(cellIndex);
-        */
     }
-    cout << "LifeGame::init()" << endl;
-}
-
-void DiamondSquare::nextIteration() {
-    GenericApp::nextIteration();
 }
 
 sf::Color DiamondSquare::getColor(int pos) {

@@ -9,6 +9,8 @@ constexpr int DS_MAX_HEIGHT = 255;
 
 class DiamondSquare : public GenericApp {
 public:
+    const sf::Keyboard::Key KEY_NEW_MAP = sf::Keyboard::M;
+
     static const unsigned CELL_COLORS_COUNT = 18;
     const sf::Color CELL_COLORS[CELL_COLORS_COUNT] = {
             sf::Color(0, 0, 204),
@@ -35,7 +37,9 @@ public:
     explicit DiamondSquare(Application &app);
 
     void init() override;
+    void update() override;
     void nextIteration() override;
+    void createNewMap();
 
 private:
     [[nodiscard]] sf::Color getColor(int pos);

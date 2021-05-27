@@ -23,7 +23,7 @@ public:
 
     virtual void init() = 0;
     virtual void nextIteration() = 0;
-    void update();
+    virtual void update();
 
     virtual void display();
 
