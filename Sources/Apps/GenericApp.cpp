@@ -1,18 +1,20 @@
 #include "GenericApp.hpp"
 
-GenericApp::GenericApp(Application& app):
+GenericApp::GenericApp(Application& app, int width, int height):
+                                        m_width(width),
+                                        m_height(height),
+                                        m_cell_size_width(float(app.getWidth()) / float(m_width)),
+                                        m_cell_size_height(float(app.getHeight()) / float(m_height)),
                                         m_app(app),
-                                        m_cell_size_width(float(app.getWidth()) / CELL_COL),
-                                        m_cell_size_height(float(app.getHeight()) / CELL_ROW),
+                                        m_vertex(),
                                         m_rd(),
                                         m_mt(m_rd()) {
-    for (int y = 0; y < CELL_ROW; y++)
-        for (int x = 0; x < CELL_COL; x++)
+    for (int y = 0; y < m_height; y++)
+        for (int x = 0; x < m_width; x++)
             addCell(x, y);
 }
 
 void GenericApp::nextIteration() {
-
 }
 
 void GenericApp::update() {
@@ -57,23 +59,23 @@ void GenericApp::resetCellColor(int index) {
     setCellColor(index, DEFAULT_COLOR);
 }
 
-int GenericApp::getCellIndex(int x, int y) {
-    return y * CELL_COL + x;
+int GenericApp::getCellIndex(int x, int y) const {
+    return y * m_width + x;
 }
 
-int GenericApp::getCellIndex(const sf::Vector2<int> vector) {
+int GenericApp::getCellIndex(const sf::Vector2<int> vector) const {
     return getCellIndex(vector.x, vector.y);
 }
 
-sf::Vector2<int> GenericApp::getCellVector(int index) {
-    return {int(index % CELL_COL), int(index / CELL_COL)};
+sf::Vector2<int> GenericApp::getCellVector(int index) const {
+    return {int(index % m_width), int(index / m_width)};
 }
 
-bool GenericApp::isOutOfBound(int x, int y) {
-    return x < 0 || x >= CELL_COL || y < 0 || y >= CELL_ROW;
+bool GenericApp::isOutOfBound(int x, int y) const {
+    return x < 0 || x >= m_width || y < 0 || y >= m_height;
 }
 
-bool GenericApp::isOutOfBound(const sf::Vector2<int> vector) {
+bool GenericApp::isOutOfBound(const sf::Vector2<int> vector) const {
     return isOutOfBound(vector.x, vector.y);
 }
 

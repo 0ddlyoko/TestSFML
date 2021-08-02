@@ -38,7 +38,7 @@ public:
         double m_heuristic;
     };
 
-    AStar(Application &app);
+    explicit AStar(Application &app);
 
     void init() override;
     void nextIteration() override;
@@ -57,6 +57,5 @@ private:
     sf::Vector2<int> m_end;
     bool m_found;
     AStarCell *m_last_cell;
-    std::mt19937 m_rng;
     std::uniform_int_distribution<int> m_range;
 };

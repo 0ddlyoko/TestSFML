@@ -5,11 +5,10 @@ using namespace std;
 
 
 TestApp::TestApp(Application& app):
-                                  GenericApp(app),
-                                  m_pos(CELL_COL / 2, CELL_ROW / 2),
+                                  GenericApp(app, 20, 20),
+                                  m_pos(m_width / 2, m_height / 2),
                                   m_direction(UP),
-                                  m_rng((unsigned) std::time(nullptr)),
-                                  m_range(0, CELL_COL * CELL_ROW) {
+                                  m_range(0, m_width * m_height) {
 }
 
 void TestApp::init() {
@@ -32,9 +31,8 @@ void TestApp::nextIteration() {
         m_pos.y++;
     else if (m_direction == RIGHT)
         m_pos.x++;
-    //cout << m_pos.x << ";" << m_pos.y << endl;
-    // Check if player has loose the game
-    if (m_pos.x < 0 || m_pos.x >= CELL_COL || m_pos.y < 0 || m_pos.y >= CELL_ROW) {
+    // Check if player has lost the game
+    if (m_pos.x < 0 || m_pos.x >= m_width || m_pos.y < 0 || m_pos.y >= m_height) {
         loose();
         return;
     }
@@ -74,11 +72,10 @@ void TestApp::loose() {
 
 sf::Vector2<int> TestApp::getRandomFoodLocation() {
     // Skip one
-    m_range(m_rng);
-    sf::Vector2<int> vec = getCellVector(m_range(m_rng));
+    sf::Vector2<int> vec = getCellVector(m_range(m_mt));
     while (vec == m_pos) {
         // If cell is where the player is, choose another one
-        vec = getCellVector(m_range(m_rng));
+        vec = getCellVector(m_range(m_mt));
     }
     return vec;
 }

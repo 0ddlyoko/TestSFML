@@ -5,16 +5,15 @@
 using namespace std;
 
 AStar::AStar(Application &app):
-        GenericApp(app),
+        GenericApp(app, 100, 100),
         m_start(1, 1),
-        m_end(CELL_COL - 2, CELL_ROW - 20),
+        m_end(m_width - 2, m_height - 20),
         m_found(false),
         m_last_cell(nullptr),
-        m_rng((unsigned) std::time(nullptr)),
         m_range(0, 100) {
-    for (int y = 0; y < CELL_ROW; y++) {
-        for (int x = 0; x < CELL_COL; x++) {
-            m_map.push_back(AStarCell({x, y}, 0, 0, m_range(m_rng) <= ASTAR_VOID_PERCENTAGE ? AStarCell::CellType::AIR : AStarCell::CellType::BLOCK));
+    for (int y = 0; y < m_height; y++) {
+        for (int x = 0; x < m_width; x++) {
+            m_map.push_back(AStarCell({x, y}, 0, 0, m_range(m_mt) <= ASTAR_VOID_PERCENTAGE ? AStarCell::CellType::AIR : AStarCell::CellType::BLOCK));
         }
     }
     m_map.at(getCellIndex(m_start)).setCellType(AStarCell::AIR);
@@ -26,8 +25,8 @@ void AStar::init() {
     // Add initial position
     AStarCell *initial_cell = &m_map.at(getCellIndex(m_start.x, m_start.y));
     m_cells.emplace(initial_cell, nullptr, distance(initial_cell->getPos(), m_end));
-    for (int y = 0; y < CELL_ROW; y++)
-        for (int x = 0; x < CELL_COL; x++)
+    for (int y = 0; y < m_height; y++)
+        for (int x = 0; x < m_width; x++)
             if (m_map.at(getCellIndex(x, y)).getCellType() == AStarCell::BLOCK)
                 setCellColor({x, y}, STONE_COLOR);
 }

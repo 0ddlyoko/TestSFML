@@ -13,7 +13,7 @@ public:
         RIGHT
     };
 
-    TestApp(Application& app);
+    explicit TestApp(Application& app);
 
     void init() override;
     void nextIteration() override;
@@ -32,6 +32,5 @@ private:
     sf::Vector2<int> m_pos;
     sf::Vector2<int> m_pos_food;
     Direction m_direction;
-    std::mt19937 m_rng;
     std::uniform_int_distribution<int> m_range;
 };

@@ -8,8 +8,8 @@ using namespace std;
 using Clock=std::chrono::high_resolution_clock;
 
 DiamondSquare::DiamondSquare(Application &app):
-        GenericApp(app),
-        m_map(CELL_COL * CELL_ROW, 0) {
+        GenericApp(app, 1025, 1025),
+        m_map(m_width * m_height, 0) {
 }
 
 void DiamondSquare::init() {
@@ -31,8 +31,8 @@ void DiamondSquare::nextIteration() {
 
 void DiamondSquare::createNewMap() {
     // Clear the map
-    int width = CELL_COL;
-    int height = CELL_ROW;
+    int width = m_width;
+    int height = m_height;
     // Initialize corners
     // Top left
     m_map.at(0) = random(DS_MIN_HEIGHT, DS_MAX_HEIGHT);
@@ -95,7 +95,7 @@ void DiamondSquare::createNewMap() {
     }
 
     // Draw
-    for (int cellIndex = 0; cellIndex < CELL_COL * CELL_ROW; cellIndex++) {
+    for (int cellIndex = 0; cellIndex < m_width * m_height; cellIndex++) {
         setCellColor(cellIndex, getColor(m_map.at(cellIndex)));
     }
 }

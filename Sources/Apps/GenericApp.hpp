@@ -5,9 +5,6 @@
 
 class Application;
 
-constexpr int CELL_COL = 1025;
-constexpr int CELL_ROW = 1025;
-
 class GenericApp {
 
 public:
@@ -19,7 +16,7 @@ public:
     const sf::Keyboard::Key KEY_PAUSE = sf::Keyboard::Space;
     const sf::Keyboard::Key KEY_NEXT_ITERATION = sf::Keyboard::N;
 
-    explicit GenericApp(Application& app);
+    explicit GenericApp(Application& app, int width, int height);
     virtual ~GenericApp() = default;
 
     virtual void init() = 0;
@@ -34,19 +31,21 @@ public:
     void resetCellColor(int x, int y);
     void resetCellColor(sf::Vector2<int> vec);
     void resetCellColor(int index);
-    [[nodiscard]] static int getCellIndex(int x, int y);
-    [[nodiscard]] static int getCellIndex(sf::Vector2<int> vector);
-    [[nodiscard]] static sf::Vector2<int> getCellVector(int index);
+    [[nodiscard]] int getCellIndex(int x, int y) const;
+    [[nodiscard]] int getCellIndex(sf::Vector2<int> vector) const;
+    [[nodiscard]] sf::Vector2<int> getCellVector(int index) const;
 
-    [[nodiscard]] static bool isOutOfBound(int x, int y);
-    [[nodiscard]] static bool isOutOfBound(sf::Vector2<int> vector);
+    [[nodiscard]] bool isOutOfBound(int x, int y) const;
+    [[nodiscard]] bool isOutOfBound(sf::Vector2<int> vector) const;
     [[nodiscard]] int random(int min, int max);
 
 protected:
+    const int m_width;
+    const int m_height;
+    const float m_cell_size_width;
+    const float m_cell_size_height;
     Application& m_app;
     std::vector<sf::Vertex> m_vertex;
-    float m_cell_size_width;
-    float m_cell_size_height;
     std::random_device m_rd;
     std::mt19937 m_mt;
 
