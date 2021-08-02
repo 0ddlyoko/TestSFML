@@ -1,5 +1,6 @@
 #pragma once
 
+#include <random>
 #include "../Application.hpp"
 
 class Application;
@@ -18,7 +19,7 @@ public:
     const sf::Keyboard::Key KEY_PAUSE = sf::Keyboard::Space;
     const sf::Keyboard::Key KEY_NEXT_ITERATION = sf::Keyboard::N;
 
-    GenericApp(Application& app);
+    explicit GenericApp(Application& app);
     virtual ~GenericApp() = default;
 
     virtual void init() = 0;
@@ -27,24 +28,27 @@ public:
 
     virtual void display();
 
-    void setCellColor(int x, int y, const sf::Color color);
-    void setCellColor(const sf::Vector2<int> vec, const sf::Color color);
-    void setCellColor(int index, const sf::Color color);
+    void setCellColor(int x, int y, sf::Color color);
+    void setCellColor(sf::Vector2<int> vec, sf::Color color);
+    void setCellColor(int index, sf::Color color);
     void resetCellColor(int x, int y);
-    void resetCellColor(const sf::Vector2<int> vec);
+    void resetCellColor(sf::Vector2<int> vec);
     void resetCellColor(int index);
     [[nodiscard]] static int getCellIndex(int x, int y);
-    [[nodiscard]] static int getCellIndex(const sf::Vector2<int> vector);
+    [[nodiscard]] static int getCellIndex(sf::Vector2<int> vector);
     [[nodiscard]] static sf::Vector2<int> getCellVector(int index);
 
     [[nodiscard]] static bool isOutOfBound(int x, int y);
-    [[nodiscard]] static bool isOutOfBound(const sf::Vector2<int> vector);
+    [[nodiscard]] static bool isOutOfBound(sf::Vector2<int> vector);
+    [[nodiscard]] int random(int min, int max);
 
 protected:
     Application& m_app;
     std::vector<sf::Vertex> m_vertex;
     float m_cell_size_width;
     float m_cell_size_height;
+    std::random_device m_rd;
+    std::mt19937 m_mt;
 
 private:
     void addCell(int x, int y);

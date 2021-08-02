@@ -4,10 +4,9 @@ using namespace std;
 
 LifeGame::LifeGame(Application &app):
         GenericApp(app),
-        m_rng((unsigned) std::time(nullptr)),
         m_range(0, 1) {
     for (unsigned cellIndex = 0; cellIndex < CELL_COL * CELL_ROW; cellIndex++)
-        m_map.push_back(m_range(m_rng));
+        m_map.push_back(m_range(m_mt));
 }
 
 void LifeGame::init() {

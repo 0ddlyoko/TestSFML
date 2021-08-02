@@ -1,7 +1,9 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16)
 project(TestSFML)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 find_package(SFML 2.5.1 REQUIRED graphics window system)
@@ -23,7 +25,9 @@ set(SOURCE
         Sources/Apps/AStar/AStarCell.cpp
         Sources/Apps/AStar/AStarCell.hpp
         Sources/Apps/DiamondSquare.cpp
-        Sources/Apps/DiamondSquare.hpp Sources/Util/MathUtil.cpp Sources/Util/MathUtil.hpp)
+        Sources/Apps/DiamondSquare.hpp
+        Sources/Util/MathUtil.cpp
+        Sources/Util/MathUtil.hpp)
 
 add_executable(TestSFML ${SOURCE})
 

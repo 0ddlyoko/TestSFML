@@ -7,17 +7,18 @@ Application::Application(const int width,
                          const int height,
                          std::string title,
                          const std::string& default_font_name)
-                            : m_window{},
-                            m_default_font{},
-                            m_width{width},
-                            m_height{height},
-                            m_title{std::move(title)},
-                            m_keyboard{},
-                            m_fps{DEFAULT_FPS},
-                            m_pause_text{"Pause", m_default_font} {
+                            : m_window(),
+                            m_default_font(),
+                            m_width(width),
+                            m_height(height),
+                            m_title(std::move(title)),
+                            m_keyboard(),
+                            m_fps(DEFAULT_FPS),
+                            m_pause_text("Pause", m_default_font),
+                            m_paused(false) {
     m_default_font.loadFromFile("../Res/Fonts/" + default_font_name + ".ttf");
-    m_pause_text.setFillColor(sf::Color{0, 0, 0, 128});
-    sf::FloatRect textRect{m_pause_text.getLocalBounds()};
+    m_pause_text.setFillColor(sf::Color(0, 0, 0, 128));
+    sf::FloatRect textRect(m_pause_text.getLocalBounds());
     m_pause_text.setOrigin(textRect.left + textRect.width / 2.0f,
                            textRect.top + textRect.height / 2.0f);
     m_pause_text.setPosition(float(width) / 2, 20);

@@ -17,6 +17,5 @@ private:
     [[nodiscard]] unsigned getNumberOfCellsAround(int x, int y);
 
     std::vector<bool> m_map;
-    std::mt19937 m_rng;
     std::uniform_int_distribution<int> m_range;
 };

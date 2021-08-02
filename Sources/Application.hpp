@@ -14,8 +14,8 @@ constexpr int DEFAULT_FPS{60};
 class Application {
 public:
 
-    Application(const int width,
-                const int height,
+    Application(int width,
+                int height,
                 std::string title,
                 const std::string& default_font_name = "arial");
 

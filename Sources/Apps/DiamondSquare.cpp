@@ -35,21 +35,19 @@ void DiamondSquare::createNewMap() {
     int height = CELL_ROW;
     // Initialize corners
     // Top left
-    m_map.at(0) = MathUtil::random(DS_MIN_HEIGHT, DS_MAX_HEIGHT);
+    m_map.at(0) = random(DS_MIN_HEIGHT, DS_MAX_HEIGHT);
     // Top right
-    m_map.at(getCellIndex(width - 1, 0)) = MathUtil::random(DS_MIN_HEIGHT, DS_MAX_HEIGHT);
+    m_map.at(getCellIndex(width - 1, 0)) = random(DS_MIN_HEIGHT, DS_MAX_HEIGHT);
     // Bot left
-    m_map.at(getCellIndex(0, height - 1)) = MathUtil::random(DS_MIN_HEIGHT, DS_MAX_HEIGHT);
+    m_map.at(getCellIndex(0, height - 1)) = random(DS_MIN_HEIGHT, DS_MAX_HEIGHT);
     // Bot right
-    m_map.at(getCellIndex(width - 1, height - 1)) = MathUtil::random(DS_MIN_HEIGHT, DS_MAX_HEIGHT);
+    m_map.at(getCellIndex(width - 1, height - 1)) = random(DS_MIN_HEIGHT, DS_MAX_HEIGHT);
 
     // Here comes the program
     int i = width - 1;
     while (i > 1) {
         auto t1 = Clock::now();
         int id = i / 2;
-        random_device rd;
-        mt19937 mt(rd());
         uniform_int_distribution<int> dist(-id, id);
         for (int x = id; x < width; x += i) {
             for (int y = id; y < height; y += i) {
@@ -60,7 +58,7 @@ void DiamondSquare::createNewMap() {
                                      getAt(x + id, y + id)
                              ) / 4.0;
                 m_map.at(getCellIndex(x, y)) =
-                        MathUtil::range(DS_MIN_HEIGHT, DS_MAX_HEIGHT, int(avg + dist(mt)));
+                        MathUtil::range(DS_MIN_HEIGHT, DS_MAX_HEIGHT, int(avg + dist(m_mt)));
             }
         }
         int decal = 0;
@@ -88,7 +86,7 @@ void DiamondSquare::createNewMap() {
                     sum += m_map.at(getCellIndex(x, y + id));
                     n++;
                 }
-                m_map.at(getCellIndex(x, y)) = int((sum / n) + dist(mt));
+                m_map.at(getCellIndex(x, y)) = int((sum / n) + dist(m_mt));
             }
         }
         auto t2 = Clock::now();

@@ -3,7 +3,9 @@
 GenericApp::GenericApp(Application& app):
                                         m_app(app),
                                         m_cell_size_width(float(app.getWidth()) / CELL_COL),
-                                        m_cell_size_height(float(app.getHeight()) / CELL_ROW) {
+                                        m_cell_size_height(float(app.getHeight()) / CELL_ROW),
+                                        m_rd(),
+                                        m_mt(m_rd()) {
     for (int y = 0; y < CELL_ROW; y++)
         for (int x = 0; x < CELL_COL; x++)
             addCell(x, y);
@@ -98,4 +100,9 @@ void GenericApp::addCell(int x, int y) {
     m_vertex.push_back(topRight);
     m_vertex.push_back(bottomRight);
     m_vertex.push_back(bottomLeft);
+}
+
+int GenericApp::random(int min, int max) {
+    std::uniform_int_distribution<int> dist(min, max);
+    return dist(m_mt);
 }

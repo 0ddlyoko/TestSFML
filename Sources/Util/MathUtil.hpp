@@ -10,5 +10,4 @@ namespace MathUtil {
     [[nodiscard]] T range(T min, T max, T curr) {
         return std::max(std::min(curr, max), min);
     }
-    [[nodiscard]] int random(int min, int max);
 }

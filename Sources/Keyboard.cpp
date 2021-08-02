@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Keyboard::Keyboard() {
+Keyboard::Keyboard(): m_keyboard_event() {
     std::fill(m_keyboard_event.begin(), m_keyboard_event.end(), false);
 }
 
